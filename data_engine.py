@@ -51,7 +51,7 @@ class DataEngine:
             
             # 3. 筛选需要的列
             keep_columns = ['交易时间', '交易对方', '商品', '收/支', self.target_column]
-            df = df[keep_columns].dropna(subset=[self.wtarget_column])
+            df = df[keep_columns].dropna(subset=[self.target_column])
 
             # 4. 执行多级排序：商家(A-Z) -> 金额(大到小) -> 时间(新到旧)
             df_sorted = df.sort_values(

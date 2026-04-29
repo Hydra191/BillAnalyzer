@@ -130,10 +130,15 @@ class MainWindow(QMainWindow):
 
     # --- 业务逻辑复用 ---
     def handle_import(self):
-        path, _ = QFileDialog.getOpenFileName(self, "选择", "", "Excel Files (*.xlsx)")
+        path, _ = QFileDialog.getOpenFileName(self, "选择", "", "")
         if path:
             try:
-                data = self.engine.process_wechat_bill(path)
+
+                if self.mode=="wechat":
+                    data = self.engine.process_wechat_bill(path)
+                if self.mode=="alipay":
+                    data = self.engine.process_alipay_bill(path)
+
                 self.refresh_table(data)
                 stats = self.engine.get_summary()
                 self.label_stat.setText(f"总支出: ¥{stats['支出']:.2f} | 总收入: ¥{stats['收入']:.2f}")

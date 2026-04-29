@@ -15,7 +15,7 @@ class MainWindow(QMainWindow):
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
         
-        self.resize(1100, 800)
+        self.resize(900, 600)
         self.init_ui()
         
         # 用于记录鼠标位置实现拖动
@@ -42,23 +42,41 @@ class MainWindow(QMainWindow):
         # --- 3. 自定义标题栏 ---
         self.title_bar = QWidget()
         self.title_bar.setObjectName("TitleBar")
-        self.title_bar.setFixedHeight(50)
+        self.title_bar.setFixedHeight(60)
         
         title_layout = QHBoxLayout(self.title_bar)
-        title_layout.setContentsMargins(20, 0, 10, 0)
+        title_layout.setContentsMargins(15, 0, 20, 0)
         
-
+        self.btn_import = QPushButton("重新导入")
+        self.btn_import.setObjectName("PrimaryButton")
+        self.btn_import.clicked.connect(self.handle_import)
         
         # 最小化 & 关闭按钮
-        self.btn_min = QPushButton("–")
-        self.btn_close = QPushButton("✕")
+        self.btn_min = QPushButton("")
+        self.btn_close = QPushButton("")
+        
+        # 设置对象名称以便在QSS中引用
         self.btn_min.setObjectName("MinButton")
         self.btn_close.setObjectName("CloseButton")
+        
+        # 设置固定大小为圆形 (宽=高)
+        self.btn_min.setFixedSize(14, 14)
+        self.btn_close.setFixedSize(14, 14)
+        
+        # 可选：设置字体大小以适配圆形按钮
+        font = self.btn_min.font()
+        font.setPointSize(12)
+        self.btn_min.setFont(font)
+        self.btn_close.setFont(font)
+
         self.btn_min.clicked.connect(self.showMinimized)
         self.btn_close.clicked.connect(self.close)
 
+        title_layout.addWidget(self.btn_import)
 
         title_layout.addStretch()
+
+        title_layout.setSpacing(15)
         title_layout.addWidget(self.btn_min)
         title_layout.addWidget(self.btn_close)
         
@@ -71,14 +89,11 @@ class MainWindow(QMainWindow):
 
         # 操作栏
         tool_layout = QHBoxLayout()
-        self.btn_import = QPushButton("重新导入账单")
-        self.btn_import.setObjectName("PrimaryButton")
-        self.btn_import.clicked.connect(self.handle_import)
+
         
         self.label_stat = QLabel("等待数据导入...")
         self.label_stat.setObjectName("StatLabel")
         
-        tool_layout.addWidget(self.btn_import)
         tool_layout.addSpacing(20)
         tool_layout.addWidget(self.label_stat)
         tool_layout.addStretch()
@@ -87,10 +102,16 @@ class MainWindow(QMainWindow):
         # 表格美化
         self.table = QTableWidget()
         self.table.setFrameShape(QFrame.Shape.NoFrame)
-        self.table.setAlternatingRowColors(True)
+        self.table.setShowGrid(False);
+        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+        # 【新增】禁止编辑表格单元格
+        self.table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
+        
+        # 可选：如果不希望用户选中单元格，也可以取消选择模式
+        # self.table.setSelectionMode(QTableWidget.SelectionMode.NoSelection)
+        
         self.table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
         content_layout.addWidget(self.table)
-        
         layout.addWidget(content_area)
 
     # --- 窗口拖动逻辑 ---
@@ -109,7 +130,7 @@ class MainWindow(QMainWindow):
 
     # --- 业务逻辑复用 ---
     def handle_import(self):
-        path, _ = QFileDialog.getOpenFileName(self, "选择Excel", "", "Excel Files (*.xlsx)")
+        path, _ = QFileDialog.getOpenFileName(self, "选择", "", "Excel Files (*.xlsx)")
         if path:
             try:
                 data = self.engine.process_wechat_bill(path)

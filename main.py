@@ -4,11 +4,27 @@ from mainwindow import MainWindow
 from modewindow import ModeWindow
 QSS = """
     #MainContainer {
-        background-color: #1e1e1e;   /* 主背景深灰 */   
+        background-color: #1E1E1E;   /* 主背景深灰 */   
+    }
+
+    #MinButton {
+        background-color: #32CD32;
+
+        border: none;
+        border-radius: 7px; /* 半径是宽度30的一半 */
+        font-weight: bold;
+    }
+    #CloseButton {
+        background-color: #FF4040;
+
+        border: none;
+        border-radius: 7px; /* 半径是宽度30的一半 */
+        font-weight: bold;
     }
     
+
     #TitleBar {
-        background-color: #252526;   /* 标题栏略深于背景 */
+        background-color: #16161C;   /* 标题栏略深于背景 */
         border-top-left-radius: 15px;
         border-top-right-radius: 15px;
     }
@@ -19,22 +35,7 @@ QSS = """
         font-size: 13px;
     }
     
-    #CloseButton, #MinButton {
-        background-color: transparent;
-        color: #cccccc;
-        border: none;
-        font-size: 16px;
-        width: 35px;
-    }
-    
-    #CloseButton:hover {
-        background-color: #e81123;   /* 典型的关闭红 */
-        color: white;
-    }
 
-    #MinButton:hover {
-        background-color: #3f3f3f;
-    }
     
     #PrimaryButton {
         background-color: #22ffffff;   /* 经典深蓝色 */
@@ -55,37 +56,24 @@ QSS = """
     
     /* 表格区域美化 */
     QTableWidget {
-        background-color: #252526;
-        color: #d4d4d4;
-        gridline-color: #333333;
+        background-color: #18191B;
         border: none;
         border-radius: 8px;
         selection-background-color: #264f78; /* 选中行颜色 */
         selection-color: white;
     }
-    
+    QTableCornerButton::section {
+        background-color: #18191B; /* 与表头和表格背景保持一致 */
+        border: none;
+    }
     QHeaderView::section {
-        background-color: #333333;
+        background-color: #18191B;
         color: #cccccc;
         padding: 8px;
         border: none;
         font-weight: bold;
     }
 
-    /* 滚动条美化 */
-    QScrollBar:vertical {
-        background: #1e1e1e;
-        width: 10px;
-        margin: 0px;
-    }
-    QScrollBar::handle:vertical {
-        background: #424242;
-        min-height: 20px;
-        border-radius: 5px;
-    }
-    QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
-        height: 0px;
-    }
 """
 class Controller:
     def __init__(self):

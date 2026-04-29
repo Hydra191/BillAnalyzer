@@ -4,7 +4,33 @@ class DataEngine:
     def __init__(self):
         self.raw_data = None
         self.target_column = '金额(元)'
+    def process_alipay_bill(self, file_path):
+        """读取并处理支付宝账单"""
+        try:
+            # 1. 读取原始数据
+            df = pd.read_excel(file_path, skiprows=17)
+            
+            # 2. 预清洗：确保金额是数字类型
+            # 这一步非常重要，解决了你之前提到的排序不正常问题
+            df[self.target_column] = pd.to_numeric(
+                df[self.target_column].astype(str).str.replace('¥', ''), 
+                errors='coerce'
+            )
+            
+            # 3. 筛选需要的列
+            keep_columns = ['交易时间', '交易对方', '商品', '收/支', self.target_column]
+            df = df[keep_columns].dropna(subset=[self.target_column])
 
+            # 4. 执行多级排序：商家(A-Z) -> 金额(大到小) -> 时间(新到旧)
+            df_sorted = df.sort_values(
+                by=['交易对方', self.target_column, '交易时间'], 
+                ascending=[True, False, False]
+            )
+            
+            self.raw_data = df_sorted
+            return df_sorted
+        except Exception as e:
+            raise Exception(f"数据引擎处理失败: {e}")
     def process_wechat_bill(self, file_path):
         """读取并处理微信账单"""
         try:
